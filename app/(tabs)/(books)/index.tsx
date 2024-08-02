@@ -1,6 +1,6 @@
 import { getAllData, uploadData } from '@/controllers/controller';
 import { useEffect, useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text } from 'react-native';
+import { ActivityIndicator, Button, ScrollView, StyleSheet, Text } from 'react-native';
 import Book from '@/components/Book';
 import { BookModel } from '@/models/Book';
 import mockdata from '@/assets/mockdata.json';
@@ -46,7 +46,7 @@ export default function Tab() {
       /> */}
 
       {/* Main Logic */}
-      {loading && <Text>Loading...</Text>}
+      {loading && <ActivityIndicator size="large" color="#666" />}
       {error && <Text>Error: {error}</Text>}
       {books &&
         Object.keys(books).map((bookId) => {
