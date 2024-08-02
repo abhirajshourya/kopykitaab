@@ -9,6 +9,7 @@ import {
   updateDoc,
   deleteDoc,
   getDoc,
+  setDoc,
 } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -57,5 +58,49 @@ export const getBookById = async (id: string) => {
     return docSnap;
   } catch (e) {
     console.error('Error getting document: ', e);
+  }
+};
+
+// Add new borrowed book
+export const borrowBook = async (id: string) => {
+  const borrowedBooksCollection = collection(db, 'borrowedBooks');
+  const bookDoc = doc(borrowedBooksCollection, id);
+  try {
+    await setDoc(bookDoc, { borrowed: true });
+  } catch (e) {
+    console.error('Error borrowing book: ', e);
+  }
+};
+
+// Return borrowed book
+export const returnBook = async (id: string) => {
+  const borrowedBooksCollection = collection(db, 'borrowedBooks');
+  const bookDoc = doc(borrowedBooksCollection, id);
+  try {
+    await deleteDoc(bookDoc);
+  } catch (e) {
+    console.error('Error returning book: ', e);
+  }
+};
+
+// Get all borrowed books
+export const getBorrowedBooks = async () => {
+  const borrowedBooksCollection = collection(db, 'borrowedBooks');
+  try {
+    const querySnapshot = await getDocs(borrowedBooksCollection);
+    // extract the book IDs
+    const bookIds = querySnapshot.docs.map((doc) => doc.id);
+    let books = {};
+    // get book details for each book ID
+    for (const bookId of bookIds) {
+      const book = await getBookById(bookId);
+      books = {
+        ...books,
+        [bookId]: book?.data(),
+      };
+    }
+    return books;
+  } catch (e) {
+    console.error('Error getting documents: ', e);
   }
 };

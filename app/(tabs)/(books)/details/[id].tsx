@@ -1,8 +1,9 @@
 import { useLocalSearchParams } from 'expo-router';
 import React, { useLayoutEffect, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { getBookById } from '@/controllers/controller';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { borrowBook, getBookById } from '@/controllers/controller';
 import { BookModel } from '@/models/Book';
+import { Feather } from '@expo/vector-icons';
 
 export default function DetailsScreen() {
   const { id } = useLocalSearchParams();
@@ -26,33 +27,43 @@ export default function DetailsScreen() {
   }, []);
 
   return (
-    <ScrollView style={styles.container}>
-      {loading && <Text>Loading...</Text>}
-      {error && <Text>Error: {error}</Text>}
-      {book && (
-        <View style={styles.detailsView}>
-          <Text style={styles.title}>{book.title}</Text>
-          <Image source={{ uri: book.photo }} style={styles.image} />
-          <DetailItem title="Author" content={book.author} />
-          <DetailItem title="Year" content={book.year.toString()} />
-          {book.summary !== 'N/A' && (
-            <DetailItem
-              title="Rating"
-              content={typeof book.rating === 'number' ? book.rating.toFixed(2).toString() : ''}
-            />
-          )}
-          {book.summary !== 'N/A' && (
-            <DetailItem
-              title="Summary"
-              content={Array.isArray(book.summary) ? book.summary.join('\n') : book.summary}
-            />
-          )}
-          {book.language !== 'N/A' && <DetailItem title="Language" content={book.language} />}
-          {book.format !== 'N/A' && <DetailItem title="Format" content={book.format} />}
-          {book.genres !== 'N/A' && <DetailItem title="Genres" content={book.genres} />}
-        </View>
-      )}
-    </ScrollView>
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        {loading && <Text>Loading...</Text>}
+        {error && <Text>Error: {error}</Text>}
+        {book && (
+          <View style={styles.detailsView}>
+            <Text style={styles.title}>{book.title}</Text>
+            <Image source={{ uri: book.photo }} style={styles.image} />
+            <DetailItem title="Author" content={book.author} />
+            <DetailItem title="Year" content={book.year.toString()} />
+            {book.summary !== 'N/A' && (
+              <DetailItem
+                title="Rating"
+                content={typeof book.rating === 'number' ? book.rating.toFixed(2).toString() : ''}
+              />
+            )}
+            {book.summary !== 'N/A' && (
+              <DetailItem
+                title="Summary"
+                content={Array.isArray(book.summary) ? book.summary.join('\n') : book.summary}
+              />
+            )}
+            {book.language !== 'N/A' && <DetailItem title="Language" content={book.language} />}
+            {book.format !== 'N/A' && <DetailItem title="Format" content={book.format} />}
+            {book.genres !== 'N/A' && <DetailItem title="Genres" content={book.genres} />}
+          </View>
+        )}
+      </ScrollView>
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => {
+          borrowBook(id as string);
+        }}
+      >
+        <Feather name="bookmark" size={24} color="#fff" />
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -68,12 +79,12 @@ const DetailItem = ({ title, content }: { title: string; content: string }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+  },
+  scrollView: {
+    flex: 1,
   },
   detailsView: {
-    display: 'flex',
-    flexDirection: 'column',
-    marginBottom: 40,
+    padding: 16,
   },
   image: {
     width: '100%',
@@ -119,5 +130,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
     elevation: 3,
+  },
+  floatingButton: {
+    position: 'absolute',
+    bottom: 16,
+    right: 16,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#007bff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
   },
 });
