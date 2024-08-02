@@ -1,16 +1,15 @@
-import { ScrollView, StyleSheet, Text } from 'react-native';
-import Book from '@/components/Book';
-import { useEffect, useState } from 'react';
 import { getAllData } from '@/controllers/controller';
+import { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
+import Book from '@/components/Book';
 import { BookModel } from '@/models/Book';
 
 export default function Tab() {
-  const [books, setBooks] = useState<any>({});
-  const [error, setError] = useState(false);
+  const [books, setBooks] = useState<{ [key: string]: BookModel }>({});
 
   useEffect(() => {
     getAllData().then((dataSnapshot) => {
-      dataSnapshot?.forEach((doc) => {
+      dataSnapshot?.forEach((doc: { id: any; data: () => any }) => {
         const bookId = doc.id;
         const bookData = doc.data();
 
@@ -22,12 +21,13 @@ export default function Tab() {
         });
       });
     });
-  });
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
-      {error && <Text>Error loading data</Text>}
       {Object.keys(books).map((bookId) => {
-        return <Book key={bookId} bookId={bookId} book={books[bookId] as BookModel} />;
+        const book = books[bookId];
+        return <Book key={bookId} bookId={bookId} book={book} />;
       })}
     </ScrollView>
   );

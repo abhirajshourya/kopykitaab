@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import React from 'react';
 
-export default function HomeLayout() {
+export default function BooksLayout() {
   return (
     <Stack
       screenOptions={{
@@ -17,7 +17,7 @@ export default function HomeLayout() {
       {/* <Stack.Screen
         name="details/[id]"
         options={{
-          title: 'Book Details',
+          title: 'Books Borrowed',
           headerBackTitleVisible: false,
         }}
       /> */}

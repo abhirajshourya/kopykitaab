@@ -16,11 +16,25 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="(home)"
+        name="(books)"
         options={{
           title: 'Books',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'book' : 'book-outline'} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="borrowed"
+        options={{
+          title: 'Borrowed',
+          headerShown: true,
+          headerTitle: 'Borrowed',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? 'bookmark' : 'bookmark-outline'}
+              color={color}
+            />
           ),
         }}
       />
