@@ -51,7 +51,9 @@ export default function Tab() {
       {books &&
         Object.keys(books).map((bookId) => {
           const book = books[bookId];
-          return <Book key={bookId} bookId={bookId} book={book} />;
+          return (
+            <Book key={bookId} bookId={bookId} book={book} to="/(tabs)/(books)/details/[id]" />
+          );
         })}
     </ScrollView>
   );

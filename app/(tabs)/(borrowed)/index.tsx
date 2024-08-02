@@ -2,10 +2,10 @@ import Book from '@/components/Book';
 import { getBorrowedBooks } from '@/controllers/controller';
 import { BookModel } from '@/models/Book';
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-export default function TabTwoScreen() {
+export default function Tab() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [books, setBooks] = useState<{ [key: string]: BookModel }>({});
@@ -40,7 +40,15 @@ export default function TabTwoScreen() {
       {books &&
         Object.keys(books).map((bookId) => {
           const book = books[bookId];
-          return <Book key={bookId} bookId={bookId} book={book} isReturned={fetchBorrowedBooks} />;
+          return (
+            <Book
+              key={bookId}
+              bookId={bookId}
+              book={book}
+              isReturned={fetchBorrowedBooks}
+              to="/(tabs)/(borrowed)/details/[id]"
+            />
+          );
         })}
 
       {books && Object.keys(books).length !== 0 && (

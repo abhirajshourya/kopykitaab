@@ -9,9 +9,10 @@ interface BookProps {
   bookId: string;
   book: BookModel;
   isReturned?: () => void;
+  to: string;
 }
 
-const Book = ({ bookId, book, isReturned }: BookProps) => {
+const Book = ({ bookId, book, isReturned, to }: BookProps) => {
   const [isBorrowed, setIsBorrowed] = useState(false);
 
   useFocusEffect(
@@ -45,7 +46,7 @@ const Book = ({ bookId, book, isReturned }: BookProps) => {
   return (
     <Link
       href={{
-        pathname: '/details/[id]',
+        pathname: to,
         params: { id: bookId },
       }}
     >
