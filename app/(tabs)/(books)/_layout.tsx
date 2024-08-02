@@ -14,13 +14,13 @@ export default function BooksLayout() {
           title: 'Books',
         }}
       />
-      {/* <Stack.Screen
+      <Stack.Screen
         name="details/[id]"
         options={{
-          title: 'Books Borrowed',
-          headerBackTitleVisible: false,
+          title: 'Book Details',
+          headerBackTitleVisible: true,
         }}
-      /> */}
+      />
     </Stack>
   );
 }

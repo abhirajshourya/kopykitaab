@@ -15,16 +15,19 @@ async function fetchBooks() {
       title: doc.title || 'N/A',
       author: doc.author_name ? doc.author_name.join(', ') : 'N/A',
       year: doc.first_publish_year || 'N/A',
-      summary: doc.first_sentence?.value || 'N/A',
+      summary: doc.first_sentence || 'N/A',
+      format: doc.format ? doc.format.join(', ') : 'N/A',
+      language: doc.language ? doc.language.join(', ') : 'N/A',
+      type: doc.type || 'N/A',
       photo: doc.cover_i ? `http://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg` : 'N/A',
       genres: doc.subject ? doc.subject.join(', ') : 'N/A',
-      rating: doc.average_rating || 'N/A', // This field might not be available in the response
+      rating: doc.ratings_average || 'N/A',
     }));
 
     // Printing the JSON formatted output
     console.log(JSON.stringify(books, null, 2));
 
-    // Optionally, save to a file
+    // save to a file
     fs.writeFileSync('assets/mockdata.json', JSON.stringify(books, null, 2), 'utf-8');
   } catch (error) {
     console.error('Error fetching book data:', error);

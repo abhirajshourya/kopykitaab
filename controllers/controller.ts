@@ -8,6 +8,7 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  getDoc,
 } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -44,5 +45,17 @@ export const getAllData = async () => {
     return querySnapshot;
   } catch (e) {
     console.error('Error getting documents: ', e);
+  }
+};
+
+// Get Book by ID
+export const getBookById = async (id: string) => {
+  const booksCollection = collection(db, 'books');
+  const bookDoc = doc(booksCollection, id);
+  try {
+    const docSnap = await getDoc(bookDoc);
+    return docSnap;
+  } catch (e) {
+    console.error('Error getting document: ', e);
   }
 };
