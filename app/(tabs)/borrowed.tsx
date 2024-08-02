@@ -3,7 +3,7 @@ import { getBorrowedBooks } from '@/controllers/controller';
 import { BookModel } from '@/models/Book';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function TabTwoScreen() {
   const [loading, setLoading] = useState(false);
@@ -32,22 +32,21 @@ export default function TabTwoScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      {loading && <Text>Loading...</Text>}
       {error && <Text>Error: {error}</Text>}
-      {books && !loading && Object.keys(books).length === 0 && (
+      {books && Object.keys(books).length === 0 && (
         <Text style={styles.noBooks}>No borrowed books!</Text>
       )}
 
       {books &&
-        !loading &&
         Object.keys(books).map((bookId) => {
           const book = books[bookId];
-          return <Book key={bookId} bookId={bookId} book={book} />;
+          return <Book key={bookId} bookId={bookId} book={book} isReturned={fetchBorrowedBooks} />;
         })}
 
-      {books && !loading && Object.keys(books).length !== 0 && (
+      {books && Object.keys(books).length !== 0 && (
         <Text style={styles.booksBorrowed}>Books Borrowed: {Object.keys(books).length}/2</Text>
       )}
+      {loading && <ActivityIndicator size="small" color="#666" />}
     </ScrollView>
   );
 }

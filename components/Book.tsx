@@ -8,9 +8,10 @@ import { TabBarIcon } from './navigation/TabBarIcon';
 interface BookProps {
   bookId: string;
   book: BookModel;
+  isReturned?: () => void;
 }
 
-const Book = ({ bookId, book }: BookProps) => {
+const Book = ({ bookId, book, isReturned }: BookProps) => {
   const [isBorrowed, setIsBorrowed] = useState(false);
 
   useFocusEffect(
@@ -24,7 +25,11 @@ const Book = ({ bookId, book }: BookProps) => {
   function borrowHandler() {
     if (isBorrowed) {
       returnBook(bookId).then(() => {
+        Alert.alert('Success!', 'Book returned successfully.');
         setIsBorrowed(false);
+        if (isReturned) {
+          isReturned();
+        }
       });
     } else {
       borrowBook(bookId)
