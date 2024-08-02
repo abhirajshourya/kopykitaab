@@ -1,9 +1,9 @@
 import { useLocalSearchParams } from 'expo-router';
 import React, { useLayoutEffect, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { borrowBook, getBookById } from '@/controllers/controller';
+import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { borrowBook, getBookById, isBookBorrowed, returnBook } from '@/controllers/controller';
 import { BookModel } from '@/models/Book';
-import { Feather } from '@expo/vector-icons';
+import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 
 export default function DetailsScreen() {
   const { id } = useLocalSearchParams();
@@ -12,11 +12,16 @@ export default function DetailsScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [isBorrowed, setIsBorrowed] = useState(false);
+
   useLayoutEffect(() => {
     setLoading(true);
     getBookById(id as string)
       .then((bookData) => {
         setBook(bookData?.data() as BookModel);
+        isBookBorrowed(id as string).then((borrowed) => {
+          setIsBorrowed(borrowed!);
+        });
       })
       .catch((err) => {
         setError(err);
@@ -25,6 +30,22 @@ export default function DetailsScreen() {
         setLoading(false);
       });
   }, []);
+
+  function borrowHandler() {
+    if (isBorrowed) {
+      returnBook(id as string).then(() => {
+        setIsBorrowed(false);
+      });
+    } else {
+      borrowBook(id as string)
+        .then(() => {
+          setIsBorrowed(true);
+        })
+        .catch((err) => {
+          Alert.alert('Oops!', err.message);
+        });
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -55,13 +76,8 @@ export default function DetailsScreen() {
           </View>
         )}
       </ScrollView>
-      <TouchableOpacity
-        style={styles.floatingButton}
-        onPress={() => {
-          borrowBook(id as string);
-        }}
-      >
-        <Feather name="bookmark" size={24} color="#fff" />
+      <TouchableOpacity style={styles.floatingButton} onPress={borrowHandler}>
+        <TabBarIcon name={isBorrowed ? 'bookmark' : 'bookmark-outline'} color="#ffffff" />
       </TouchableOpacity>
     </View>
   );

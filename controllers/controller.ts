@@ -64,6 +64,15 @@ export const getBookById = async (id: string) => {
 // Add new borrowed book
 export const borrowBook = async (id: string) => {
   const borrowedBooksCollection = collection(db, 'borrowedBooks');
+
+  //check if borrowed books is less than 2
+  const borrowedBooks = await getBorrowedBooks();
+  if (Object.keys(borrowedBooks!).length >= 2) {
+    throw new Error(
+      'You can only borrow 2 books at a time. Please return a book to borrow another.'
+    );
+  }
+
   const bookDoc = doc(borrowedBooksCollection, id);
   try {
     await setDoc(bookDoc, { borrowed: true });
@@ -102,5 +111,17 @@ export const getBorrowedBooks = async () => {
     return books;
   } catch (e) {
     console.error('Error getting documents: ', e);
+  }
+};
+
+// isBookBorrowed
+export const isBookBorrowed = async (id: string) => {
+  const borrowedBooksCollection = collection(db, 'borrowedBooks');
+  const bookDoc = doc(borrowedBooksCollection, id);
+  try {
+    const docSnap = await getDoc(bookDoc);
+    return docSnap.exists();
+  } catch (e) {
+    console.error('Error getting document: ', e);
   }
 };

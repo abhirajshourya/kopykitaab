@@ -1,7 +1,9 @@
-import { View, Text, Image, StyleSheet } from 'react-native';
-import React from 'react';
+import { View, Text, Image, StyleSheet, Button, TouchableOpacity, Alert } from 'react-native';
+import React, { useCallback, useState } from 'react';
 import { BookModel } from '@/models/Book';
-import { Link } from 'expo-router';
+import { Link, useFocusEffect } from 'expo-router';
+import { borrowBook, isBookBorrowed, returnBook } from '@/controllers/controller';
+import { TabBarIcon } from './navigation/TabBarIcon';
 
 interface BookProps {
   bookId: string;
@@ -9,6 +11,32 @@ interface BookProps {
 }
 
 const Book = ({ bookId, book }: BookProps) => {
+  const [isBorrowed, setIsBorrowed] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      isBookBorrowed(bookId).then((borrowed) => {
+        setIsBorrowed(borrowed!);
+      });
+    }, [])
+  );
+
+  function borrowHandler() {
+    if (isBorrowed) {
+      returnBook(bookId).then(() => {
+        setIsBorrowed(false);
+      });
+    } else {
+      borrowBook(bookId)
+        .then(() => {
+          setIsBorrowed(true);
+        })
+        .catch((err) => {
+          Alert.alert('Oops!', err.message);
+        });
+    }
+  }
+
   return (
     <Link
       href={{
@@ -34,32 +62,46 @@ const Book = ({ bookId, book }: BookProps) => {
             display: 'flex',
             flexDirection: 'column',
             flex: 0.7,
+            justifyContent: 'space-between',
           }}
         >
-          <Text
+          <View>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 'bold',
+              }}
+            >
+              {book.title}
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                color: '#666',
+              }}
+            >
+              Author: {book.author}
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                color: '#666',
+              }}
+            >
+              Year: {book.year}
+            </Text>
+          </View>
+          <View
             style={{
-              fontSize: 16,
-              fontWeight: 'bold',
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
             }}
           >
-            {book.title}
-          </Text>
-          <Text
-            style={{
-              fontSize: 14,
-              color: '#666',
-            }}
-          >
-            Author: {book.author}
-          </Text>
-          <Text
-            style={{
-              fontSize: 14,
-              color: '#666',
-            }}
-          >
-            Year: {book.year}
-          </Text>
+            <TouchableOpacity onPress={borrowHandler}>
+              <TabBarIcon name={isBorrowed ? 'bookmark' : 'bookmark-outline'} color="#007bff" />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Link>
